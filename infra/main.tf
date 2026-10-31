@@ -21,8 +21,9 @@ provider "azurerm" {
 
 
 resource "azurerm_postgresql_flexible_server" "postgresql" {
-  name                   = "psql-fin-test-1"
-  resource_group_name    = "fin-test-1"
+  tags = var.common_tags
+  name                   = "psql-fin-test-3"
+  resource_group_name    = "fin-test-3"
   location               = "uksouth"
   version                = "16"
   sku_name               = "B_Standard_B1ms"
@@ -30,6 +31,8 @@ resource "azurerm_postgresql_flexible_server" "postgresql" {
   administrator_login    = "psqladmin"
   administrator_password = random_password.postgresql_admin.result
   public_network_access_enabled = false
+  backup_retention_days         = 35
+  geo_redundant_backup_enabled  = true
 
   # Azure assigns an availability zone on creation since none is declared here — a later apply
   # then sees that as drift and tries to reset it, which the provider rejects outright:
@@ -54,15 +57,17 @@ data "azurerm_private_dns_zone" "postgresql_dns_zone" {
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "postgresql_dns_zone_link" {
-  name                  = "link-fin-test-1"
+  tags = var.common_tags
+  name                  = "link-fin-test-3"
   resource_group_name   = var.hub_resource_group
   private_dns_zone_name = data.azurerm_private_dns_zone.postgresql_dns_zone.name
   virtual_network_id    = var.vnet_id
 }
 
 resource "azurerm_private_endpoint" "postgresql_pe" {
-  name                = "pe-psql-fin-test-1"
-  resource_group_name = "fin-test-1"
+  tags = var.common_tags
+  name                = "pe-psql-fin-test-3"
+  resource_group_name = "fin-test-3"
   location            = "uksouth"
   subnet_id           = var.subnet_id
 
