@@ -79,6 +79,17 @@ npm run build    # production build (tsc -b && vite build)
 Set `VITE_API_BASE_URL` (see `frontend/.env.example`) if the backend isn't
 at `http://localhost:8000/api`.
 
+## Database backups & restore
+
+The Azure PostgreSQL Flexible Server (`infra/main.tf`) has automated backups
+turned on. Retention is 35 days (`backup_retention_days = 35`), so you can
+restore to any point in time within that window. Backups are geo-redundant
+(`geo_redundant_backup_enabled = true`) and are copied to the paired region,
+`ukwest`. The restore steps cover point-in-time restore, geo-restore,
+reconnecting and verifying, and the restore-test log. They are in
+[`docs/runbooks/database-restore.md`](docs/runbooks/database-restore.md).
+A test restore must be run and logged there before go-live.
+
 ## Auth trade-off (dev-only)
 
 The access token is kept in memory only; the refresh token is kept in
