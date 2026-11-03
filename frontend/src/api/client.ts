@@ -1,6 +1,12 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
+const API_BASE_URL: string = import.meta.env.VITE_API_BASE_URL;
+
+if (!API_BASE_URL) {
+  throw new Error(
+    "VITE_API_BASE_URL is not set. Define it in the environment (see .env.example) before building/running the frontend."
+  );
+}
 
 // Access token lives only in memory (module-level variable), never
 // localStorage, to limit XSS blast radius. Refresh token is kept in
